@@ -1,0 +1,19 @@
+.active {
+  color: rgb(255, 179, 0);
+}
+
+.header {
+  background-color: rgba(14, 21, 102, 0.86);
+    padding: 20px 0 20px 0;
+  margin-right: auto;
+  margin-left: auto;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.473);
+ 
+}
+
+.nav {
+    margin-left: 80px;
+  display: flex;
+  gap: 40px;
+  
+}
