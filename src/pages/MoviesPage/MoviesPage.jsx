@@ -1,86 +1,67 @@
-import { useSearchParams, useLocation, Link} from "react-router-dom";
 import { useState, useEffect } from 'react';
-import {fetchMovieByKeyword} from '../../Api/apiServices'
-import SearchBar from '../../components/SearchBar/SearchBar'
-import Loader from '../../components/Loader/Loader'
-import toast from 'react-hot-toast'
-import css from './MoviesPage.module.css'
+import { useSearchParams } from 'react-router-dom';
+import SearchForm from '../../components/SearchForm/SearchForm';
+import MovieList from '../../components/MoviesList/MoviesList';
+import { getSearchMovies } from '../../apiServices';
+import Loader from '../../components/Loader/Loader';
+import toast from 'react-hot-toast';
+import css from './MoviesPage.module.css';
 
-const notify = (msg) => toast.error(`${msg}`, {
-    style: {
-      border: '1px solid #000000',
-      padding: '16px',
-      color: '#000000',
-    },
-    iconTheme: {
-      primary: '#000000',
-      secondary: '#f5f5f5',
-    },
-  });
 
-export default function MoviesPage () {
-    const location = useLocation();
+export default function MoviesPage() {    
     const [searchParams, setSearchParams] = useSearchParams();
     const movieName = searchParams.get('movieName') ?? '';
     const [moviesList, setMoviesList] = useState([]);
-    const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+    
+
+    
 
     useEffect(() => {
-        if (movieName === '') {
-            notify('Please, enter the keyword!');
-            return;
-        }
+        if (!movieName) return;
         setMoviesList([]);
         setLoading(true);
-        const getMovieByKeyword = async (movieName) => {
+        const getMovieSearch = async (movieName) => {
             try {
-                await fetchMovieByKeyword(movieName).then(data => {
-                if (!data.results.length) {
-                    setLoading(false);
+                const data = await getSearchMovies(movieName);
+                if (!data.results.length) { 
                     setError(true);
-                    return console.log(
-                    'There is no movies with this request. Please, try again'
-                    );
+                    toast.error('There are no movies with this request. Please, try again');
+                    return;
                 }
-                setError(false);
                 setMoviesList(data.results);
-                setLoading(false);
-            })
             } catch (error) {
-                notify('Something went wrong. Please, try again!');
+                setError(true);
                 console.log(error);
+                toast.error("Whoops. Something went wrong! Please try reloading this page!");
+            } finally {
+                setLoading(false);
+                setError(false);
             }
-        }
-        getMovieByKeyword(movieName);
+        };
+        getMovieSearch(movieName);
     }, [movieName]);
 
     const handleSubmit = e => {
         e.preventDefault();
         const searchForm = e.currentTarget;
-        setSearchParams({ movieName: searchForm.elements.movieName.value });
+        const newMovieName = searchForm.elements.movieName.value.trim();
+        if (!newMovieName) {
+            toast.error('Please enter a keyword!');
+            return;
+        }
+        setSearchParams({ movieName: newMovieName });
         searchForm.reset();
-    };
 
+    }
 
     return (
-        <main className="container">
-            <div className={css.moviesPage}>
-                <SearchBar onSubmit={handleSubmit}/>
-                {error && <p>There is no movies with this request. Please, try again</p>}
-                <ul className={css.movieList}>
-                    {moviesList.map(movie => {
-                        return (
-                            <li key={movie.id}>
-                                <Link to={`/movies/${movie.id}`} state={{ from: location }} className={css.item}>
-                                    {movie.original_title || movie.name}
-                                </Link>
-                            </li>
-                        );
-                    })}
-                    {loading && <Loader />}
-                </ul>
-            </div>
-        </main>
-    )
+        <div className={css.container}>
+            <SearchForm onSubmit={handleSubmit} />
+            {loading && <Loader />}
+            {error && <p>There is no movies with this request. Please, try again</p>}
+            <MovieList movies={moviesList} />
+        </div>
+    );
 }

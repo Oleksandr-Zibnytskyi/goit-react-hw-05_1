@@ -1,0 +1,19 @@
+.container {
+    margin-top: 30px;
+}
+
+.item {
+    margin-bottom: 16px;
+   
+}
+.icon {
+    margin-right: 6px;
+}
+.name {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.content {
+    font-size: 14px;
+}

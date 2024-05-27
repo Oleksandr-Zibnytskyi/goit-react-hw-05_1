@@ -1,19 +1,20 @@
-.active {
-  color: rgb(255, 179, 0);
-}
-
 .header {
-  background-color: rgba(14, 21, 102, 0.86);
-    padding: 20px 0 20px 0;
-  margin-right: auto;
-  margin-left: auto;
-  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.473);
- 
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 10px 0 10px 10px;
+  background-color: rgb(74, 81, 111);
+  box-shadow: 0px 5px 10px rgb(59, 59, 59);
+
 }
 
-.nav {
-    margin-left: 80px;
-  display: flex;
-  gap: 40px;
-  
+.link {
+  padding: 5px;
+  color: rgb(255, 255, 255);
+}
+
+.active {
+color: #ffb325eb;
+text-decoration: underline;
+text-underline-offset: 3px;
 }
